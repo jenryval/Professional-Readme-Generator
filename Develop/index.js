@@ -1,19 +1,37 @@
 // array of questions for user
 const inquirer = require('inquirer');
-const fs = require('fs')
-const utils = require('utils')
-const generateMarkdown = require('./utils/generateMarkdown')
+const generateMarkdown = require('./utils/generateMarkdown');
+const fs = require('fs');
+const util = require('util');
+const writeFileAsync = util.promisify(fs.writeFile);
 
+
+const questions = () =>
 inquirer
   .prompt([{
     type: 'input',
     message: 'what is the project tile?',
-    name: 'name',
+    name: 'title',
   },
   {
     type: 'input',
-    message: 'what are some instructions on how to use your APP?',
-    name: 'instrucitons',
+    message: 'What are some installation steps for your APP?',
+    name: 'installation',
+  },
+  {
+    type: 'input',
+    message: 'any contributions?',
+    name: 'contribution',
+  },
+  {
+    type: 'input',
+  message: 'do you have a current test?',
+  name: 'test',
+  },
+  {
+    type: 'input',
+  message: 'How would you use your App?',
+  name: 'usage',
   },
   {
     type: 'input',
@@ -23,37 +41,30 @@ inquirer
   {
     type: 'input',
     message: 'Any credits?',
-    name: 'installation',
+    name: 'credit',
   },
   {
-    type: 'checkbox' ,
+    type: 'list' ,
     message: 'What Licenses did you use?',
     name: 'licenses',
-    choices: ['BSD Licesnse', 'MIT License', 'GPL License', 'Apache license', 'GNU Public Licesnse', 'Other', 'NONE'],
+    choices: ['BSD License', 'MIT License', 'Mozilla License', 'Apache license', 'GNU Public Licesnse', 'Other', 'NONE'],
   },
   {
     type: 'input',
     message: 'what is your github?',
-    name: 'github?',
+    name: 'github',
   },
   {
     type: 'input',
-    message: 'What is your email?',
-    name: 'Email',
+    message: 'What is your Email?',
+    name: 'email',
 
-  }]).then()
+  }])
 
 
 // function to write README file
-fs.writeToFile('README.md', data, (err)=>
-    {if (err) throw err;
-    console.log('Congrats you have made a README.md!');
-});
+questions()
+  .then((answers) => writeFileAsync('README.md', generateMarkdown(answers)))
+  .then(()=> console.log('Success you wrote a README.md!'))
+  .catch((err)=> console.error(err));
 
-// function to initialize program
-function init() {
-
-}
-
-// function call to initialize program
-init()
